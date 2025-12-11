@@ -1,0 +1,39 @@
+{% extends "layouts/question.html" %}
+
+{% block pageTitle %}
+  Question page template – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block question %}
+
+      <form class="form" action="disability-answer" method="post">
+
+       {{ govukRadios({
+        name: "disability",
+        id: "disability",
+        fieldset: {
+          legend: {
+            text: "Does your child have a disability?",
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--l"
+          }
+        },
+        errorMessage: { text: data['error'] } if data['error'] else false,
+        items: [
+          {
+            value: "false",
+            text: "No"
+          },
+          {
+            text: "Yes",
+            value: "true"
+          }
+        ]
+      }) }}
+
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+
+      </form>
+{% endblock %}

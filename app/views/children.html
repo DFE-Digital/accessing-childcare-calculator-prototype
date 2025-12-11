@@ -1,0 +1,31 @@
+{% extends "layouts/question.html" %}
+
+{% block pageTitle %}
+  Question page template – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block question %}
+      <form class="form" action="children-answer" method="post">
+
+        {{ govukInput({
+          label: {
+            text: "How many children do you have?",
+            classes: "govuk-label--l",
+            isPageHeading: true,
+            caption: { text: "sasdas"}
+          },
+          classes: "govuk-input--width-5",
+          id: "number_of_children",
+          name: "number_of_children",
+          inputmode: "numeric",
+          spellcheck: false,
+          errorMessage: { text: data['error'] } if data['error'] else false
+        }) }}
+
+
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+
+      </form>
+{% endblock %}

@@ -1,0 +1,8 @@
+{
+  "serviceName": "Childcare cost calculator",
+  "plugins": {
+    "govuk-frontend": {
+      "rebrand": true
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{% extends "layouts/main.html" %}
+
+{% block pageTitle %}
+  Start page template – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block header %}
+  <!-- Blank header with no service name for the start page -->
+  {{ govukHeader() }}
+{% endblock %}
+
+{% block beforeContent %}
+
+  {{ govukBreadcrumbs({
+    items: [
+      {
+        text: "Home",
+        href: "#"
+      },
+      {
+        text: "Section",
+        href: "#"
+      },
+      {
+        text: "Subsection"
+      }
+    ]
+  }) }}
+
+{% endblock %}
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      <h1 class="govuk-heading-xl">
+        {{ serviceName }}
+      </h1>
+
+      <p>This Childcare Cost Calculator makes it easy to estimate your nursery fees of childcare costs based on daily nursery fees, 
+        free childcare hours, and any government support you're elebible for. 
+        If you don't know what your eligible for, use our <a href=''>Chilcare eligibility checker</a>.</p>
+
+      <p>The calculator will tell you:</p>
+
+      <ul class="govuk-list govuk-list--bullet">
+        <li>Your overall childcare costs breakdown annually, monthly and weekly</li>
+        <li>Works out your exact funded hours adn uncovered hours per week</li>
+        <li>It will breakdown your entitlement used</li>
+      </ul>
+
+      
+
+      {{ govukButton({
+        text: "Start now",
+        href: "schemes.html",
+        isStartButton: true
+      }) }}
+
+      <h2 class="govuk-heading-m">
+        What you'll need
+      </h2>
+
+      <p>
+        To use the childcare cost calculator, gather:
+      </p>
+
+      <ul class="govuk-list govuk-list--bullet">
+        <li>What childcare schemes you're using</li>
+        <li>How many hours per week of childcare you need</li>
+        <li>How many weeks of childcare you need per year</li>
+        <li>Your childcare daily costs</li>
+        <li>What other fees does your nursery charge you</li>
+      </ul>
+
+    </div>
+
+    <div class="govuk-grid-column-one-third">
+
+      <aside class="govuk-prototype-kit-common-templates-related-items" role="complementary">
+        <h2 class="govuk-heading-m" id="subsection-title">
+          Related content
+        </h2>
+        <nav role="navigation" aria-labelledby="subsection-title">
+          <ul class="govuk-list govuk-!-font-size-16">
+            <li>
+              <a href="#">
+                Childcare eligibility checker
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+    </div>
+  </div>
+
+{% endblock %}

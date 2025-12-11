@@ -1,0 +1,48 @@
+{% extends "layouts/question.html" %}
+
+{% block pageTitle %}
+  Question page template – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block question %}
+
+      <form class="form" action="weeks-answer" method="post">
+
+        {{ govukSelect({
+          id: "weeks",
+          name: "weeks",
+          label: {
+            text: "How many weeks of childcare do you need per year?",
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--l"
+
+          },
+          errorMessage: { text: data['error'] } if data['error'] else false,
+          items: [
+            {
+              value: "38",
+              text: "38 weeks (term time only)"
+            },
+            { value: "39", text: "39 weeks" },
+            { value: "40", text: "40 weeks" },
+            { value: "41", text: "41 weeks" },
+            { value: "42", text: "42 weeks" },
+            { value: "43", text: "43 weeks" },
+            { value: "44", text: "44 weeks" },
+            { value: "45", text: "45 weeks" },
+            { value: "46", text: "46 weeks" },
+            { value: "47", text: "47 weeks" },
+            { value: "48", text: "48 weeks" },
+            { value: "49", text: "49 weeks" },
+            { value: "50", text: "50 weeks" },
+            { value: "51", text: "51 weeks" },
+            { value: "52", text: "52 weeks (full year)" }
+          ]
+        }) }}
+       
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+
+      </form>
+{% endblock %}

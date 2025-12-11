@@ -1,0 +1,50 @@
+{% extends "layouts/question.html" %}
+
+{% block pageTitle %}
+  Question page template – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block question %}
+
+      <form class="form" action="provider-cost-answer" method="post">
+      
+       {{ govukInput({
+          label: {
+            text: "What are you " + data['provider-frequency'] + " childcare costs for your child?",
+            classes: "govuk-label--l",
+            isPageHeading: true
+          },
+          hint: {
+            text:"Your rates from your chosen nursery, childminder, nanny, after-shool or holiday club."
+          },
+          classes: "govuk-input--width-5",
+          id: "provider-rate",
+          name: "provider-rate",
+          spellcheck: false,
+          errorMessage: { text: data['error'] } if data['error'] else false,
+          prefix: {
+            text: "£"
+          },
+          suffix: {
+            text: "per " + data['provider-frequency'] | replace("ly", "")
+          }
+        }) }}
+
+        {{ govukCheckboxes({
+          name: "national-average",
+          items: [
+            {
+              value: "Use national average",
+              text: "I don't know my childcare costs, use the national average"
+            }
+          ]
+        }) }}
+
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+
+      </form>
+
+
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "layouts/question.html" %}
+
+{% block pageTitle %}
+  Question page template – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block question %}
+
+      <form class="form" action="provider-frequency-answer" method="post">
+
+        {% set sessionsPerWeek %}
+        {{ govukInput({
+          id: "number-of-sessions",
+          name: "number-of-sessions",
+          classes: "govuk-!-width-one-third",
+          label: {
+            text: "How many sessions per week?"
+          }
+        }) }}
+        {% endset -%}
+
+       {{ govukRadios({
+        name: "provider-frequency",
+        id: "provider-frequency",
+        fieldset: {
+          legend: {
+            text: "How does your provider charge for paid childcare?",
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--l"
+          }
+        },
+        errorMessage: { text: data['error'] } if data['error'] else false,
+        items: [
+          {
+            value: "hourly",
+            text: "Hourly"
+          },
+          {
+            value: "weekly",
+            text: "Weekly"
+          },
+          {
+            value: "monthly",
+            text: "Monthly"
+          },
+          {
+            value: "session",
+            text: "Morning / Afternoon Sessions",
+            conditional: {
+              html: sessionsPerWeek
+            }
+          }
+        ]
+      }) }}
+
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+
+      </form>
+{% endblock %}

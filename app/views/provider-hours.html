@@ -1,0 +1,65 @@
+{% extends "layouts/question.html" %}
+
+{% block pageTitle %}
+  Question page template – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block question %}
+
+       <h1 class="govuk-heading-l">What is your entitled hours allocation?</h1>
+
+       {{ govukInsetText({
+        text: "Some providers have different rules about how your entitled hours can be allocated. If you don't know if this is the case just choose 'All'."
+      }) }}
+
+      <form class="form" action="provider-hours-answer" method="post">
+        {% set weeksMultiplier = data['weeks'] | float %}
+        {% set gvtHoursWeeklyHoursCovered = 0 %}
+        {% set gvtHoursWeeklyHoursCovered %} 
+          {{ 1140/weeksMultiplier if data['schemes'] and "working" in data['schemes'] }} 
+          {{ 570/weeksMultiplier if data['schemes'] and "disadvantage" in data['schemes'] and "working" not in data['schemes'] and "universal34" not in data['schemes'] }} 
+          {{ 570/weeksMultiplier if data['schemes'] and "universal34" in data['schemes'] and "working" not in data['schemes'] and "disadvantage" not in data['schemes']}} 
+        {% endset %}
+
+        {% set setEntitledHours %}
+        {{ govukInput({
+          id: "provider-restricted-hours",
+          name: "provider-restricted-hours",
+          classes: "govuk-!-width-one-third",
+          label: {
+            text: "How many entitled hours per week will you use?"
+          }
+        }) }}
+        {% endset -%}
+
+
+       {{ govukRadios({
+        name: "provider-all-hours",
+        id: "provider-all-hours",
+        fieldset: {
+          legend: {
+            text: "How much of your free hours are you using per week?"
+          }
+        },
+        errorMessage: { text: data['error'] } if data['error'] else false,
+        items: [
+          {
+            value: "true",
+            text: "All " + gvtHoursWeeklyHoursCovered + " of my entitled hours"
+          },
+          {
+            value: "false",
+            text: "Less than my entitled hours",
+            conditional: {
+              html: setEntitledHours
+            }
+          }
+        ]
+      }) }}
+
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+
+      </form>
+{% endblock %}

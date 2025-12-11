@@ -1,0 +1,37 @@
+{% extends "layouts/question.html" %}
+
+{% block pageTitle %}
+  Question page template – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block question %}
+      <form class="form" action="hours-answer" method="post">
+
+       {{ govukInput({
+          label: {
+            text: "How many hours per week will your child need?",
+            classes: "govuk-label--l",
+            isPageHeading: true
+          },
+          hint: {
+            text:"Hint text"
+          },
+          classes: "govuk-input--width-5",
+          id: "hours",
+          name: "hours",
+          inputmode: "numeric",
+          spellcheck: false,
+          errorMessage: { text: data['error'] } if data['error'] else false,
+          suffix: {
+            text: "hours"
+          }
+        }) }}
+
+
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+
+      </form>
+
+{% endblock %}

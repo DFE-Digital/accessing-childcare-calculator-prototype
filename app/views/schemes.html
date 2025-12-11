@@ -1,0 +1,58 @@
+{% extends "layouts/question.html" %}
+
+{% block pageTitle %}
+  Which childcare schemes are you using? – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block question %}
+
+      <form class="form" action="schemes-answer" method="post">
+
+       {{ govukCheckboxes({
+        name: "schemes",
+        fieldset: {
+          legend: {
+            text: "Which childcare schemes are you using?",
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--l"
+          }
+        },
+          hint: {
+            html: "Select all childcare funding which applies to you. If you don't know what your eligible for use our <a href=''>Childcare eligibility checker</a>."
+          },
+          errorMessage: { text: data['error'] } if data['error'] else false,
+          items: [
+            {
+              value: "working",
+              text: "Working parents",
+              hint: { html: "Read more about <a href='https://www.gov.uk/free-childcare-if-working'>free childcare while working</a>."  }
+            },
+            {
+              value: "disadvantage",
+              text: "15 hours disadvantage",
+              hint: { html: "Read more about <a href='https://www.gov.uk/help-with-childcare-costs/free-childcare-2-year-olds-extra-support'>15 hours free education and childcare for 2 year olds if you get extra support</a>."  }
+          },
+            {
+              value: "universal34",
+              text: "15 hours universal",
+              hint: { html: "Read more about <a href='https://www.gov.uk/help-with-childcare-costs/free-childcare-and-education-for-3-to-4-year-olds'>15 hours free childcare for 3 and 4-year olds</a>."  }
+            },
+            {
+              value: "taxfree",
+              text: "Tax-free childcare",
+              hint: { html: "Read more about <a href='https://www.gov.uk/tax-free-childcare'>tax-free childcare</a>."  }
+            },
+            {
+              value: "universal",
+              text: "Universal credit childcare",
+              hint: { html: "Read more about <a href='https://www.gov.uk/help-with-childcare-costs/universal-credit'>universal credit and childcare</a>."  }
+            }
+          ]
+        }) }}
+
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+
+      </form>
+{% endblock %}

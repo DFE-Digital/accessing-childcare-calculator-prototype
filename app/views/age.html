@@ -1,0 +1,54 @@
+{% extends "layouts/question.html" %}
+
+{% block pageTitle %}
+  Question page template – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block question %}
+
+      <form class="form" action="age-answer" method="post">
+
+        {% set ageHtml %}
+        {{ govukInput({
+          id: "age-in-years",
+          name: "age-in-years",
+          classes: "govuk-!-width-one-third",
+          label: {
+            text: "How many years old?"
+          }
+        }) }}
+        {% endset -%}
+
+       {{ govukRadios({
+        name: "age-over-nine-months",
+        fieldset: {
+          legend: {
+            text: "How old is your child?",
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--l"
+          }
+        },
+        errorMessage: { text: data['error'] } if data['error'] else false,
+        items: [
+          {
+            value: "0",
+            text: "Under 9 months old"
+          },
+          {
+            text: "Over 9 months old",
+            value: "1",
+            conditional: {
+              html: ageHtml
+            }
+          }
+        ]
+      }) }}
+
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+
+      </form>
+
+
+{% endblock %}

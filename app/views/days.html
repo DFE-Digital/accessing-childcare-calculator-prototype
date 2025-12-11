@@ -1,0 +1,56 @@
+{% extends "layouts/question.html" %}
+
+{% block pageTitle %}
+  Question page template – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+
+{% block question %}
+
+
+      <form class="form" action="hours" method="post">
+
+       {{ govukCheckboxes({
+        name: "days",
+        fieldset: {
+          legend: {
+            text: "Which days will you child attend childcare?",
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--l"
+          }
+        },
+        hint: {
+          text: "Select all that apply"
+        },
+        errorMessage: { text: data['error'] } if data['error'] else false
+        items: [
+          {
+            value: "0",
+            text: "Monday"
+          },
+          {
+            value: "1",
+            text: "Tuesday"
+          },
+          {
+            value: "2",
+            text: "Wednesday"
+          },
+          {
+            value: "3",
+            text: "Thursday"
+          },
+          {
+            value: "4",
+            text: "Friday"
+          }
+        ]
+      }) }}
+
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+
+      </form>
+
+{% endblock %}

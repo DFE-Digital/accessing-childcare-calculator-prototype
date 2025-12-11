@@ -1,0 +1,36 @@
+{% extends "layouts/question.html" %}
+
+{% block pageTitle %}
+  Question page template – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block question %}
+
+
+      <form class="form" action="extras-answer" method="post">
+
+       {{ govukInput({
+          label: {
+            text: "Do you expect any additional charges? (optional)",
+            classes: "govuk-label--l",
+            isPageHeading: true
+          },
+          hint: {
+            text:"These are additional charges not covered by the nursery and could be trips, activities, extra hours, etc."
+          },
+          classes: "govuk-input--width-5",
+          id: "provider-extras",
+          name: "provider-extras",
+          spellcheck: false,
+          prefix: {
+            text: "£"
+          }
+        }) }}
+
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+
+      </form>
+      
+{% endblock %}

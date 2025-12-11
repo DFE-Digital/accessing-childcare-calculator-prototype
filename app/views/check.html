@@ -1,0 +1,265 @@
+{% extends "layouts/main.html" %}
+
+{% block pageTitle %}
+  Your estimated childcare costs – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block beforeContent %}
+  {{ govukBackLink({
+    text: "Back",
+    href: "javascript:window.history.back()"
+  }) }}
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds-from-desktop">
+
+      <h1 class="govuk-heading-xl">
+        Your estimated childcare costs
+      </h1>
+
+      {% set yourAnswersHtml %}
+      {{ govukSummaryList({
+        rows: [
+          {
+            key: {  text: "Schemes" },
+            value: { text: data['schemes'] },
+            actions: { items: [ { href: "schemes?redirectUrl=check", text: "Change", visuallyHiddenText: "schemes" } ] }
+          },
+          {
+            key: {  text: "Does your child have a disability?" },
+            value: { text: data['disability'] },
+            actions: { items: [ { href: "disability?redirectUrl=check", text: "Change", visuallyHiddenText: "disability" } ] }
+          },
+          {
+            key: {  text: "Hours per week" },
+            value: { text: data['hours'] },
+            actions: { items: [ { href: "hours?redirectUrl=check", text: "Change", visuallyHiddenText: "hours per week" } ] }
+          },
+          {
+            key: {  text: "Weeks childcare required" },
+            value: { text: data['weeks'] },
+            actions: { items: [ { href: "weeks?redirectUrl=check", text: "Change", visuallyHiddenText: "weeks of childcare required" } ] }
+          },
+          {
+            key: {  text: "Provider invoices" },
+            value: { text: data['provider-frequency'] },
+            actions: { items: [ { href: "provider-frequency?redirectUrl=check", text: "Change", visuallyHiddenText: "invoice frequency" } ] }
+          },
+          {
+            key: {  text: "Provider rate" },
+            value: { text: "£" + data['provider-rate'] + " per " + data['provider-frequency'] | replace("ly", "")},
+            actions: { items: [ { href: "provider-cost?redirectUrl=check", text: "Change", visuallyHiddenText: "provider rate" } ] }
+          },
+          {
+            key: {  text: "Entitled hours used" },
+            value: { text: "all" if data['provider-all-hours'] == "true" else data['provider-restricted-hours']},
+            actions: { items: [ { href: "provider-hours?redirectUrl=check", text: "Change", visuallyHiddenText: "entitled hours" } ] }
+          },
+          {
+            key: {  text: "Consumables cost" },
+            value: { text: "£" + (data['provider-consumables'] if data['provider-consumables'] else 0) + " per " + data['provider-frequency'] | replace("ly", "")},
+            actions: { items: [ { href: "consumables?redirectUrl=check", text: "Change", visuallyHiddenText: "consumables" } ] }
+          },
+          {
+            key: {  text: "Extras cost" },
+            value: { text: "£" + (data['provider-extras'] if data['provider-extras'] else 0) },
+            actions: { items: [ { href: "extras?redirectUrl=check", text: "Change", visuallyHiddenText: "extras" } ] }
+          }
+        ]
+      }) }}
+      {% endset -%}
+
+
+      <!-- CALCULATIONS GO HERE -->
+      {% set weeksMultiplier = data['weeks'] | float %}
+      
+      {% set providerMultiplier %} 
+        {{ (data["hours"] | float * weeksMultiplier) if data['provider-frequency'] == "hourly" }} 
+        {{ weeksMultiplier if data['provider-frequency'] == "weekly" }}
+        {{ 12 if data['provider-frequency'] == "monthly" }} 
+        {{ (weeksMultiplier * data['number-of-sessions'] | float) if data['provider-frequency'] == "session" }}
+      {% endset %}
+
+      {% set totalProviderConsumables = 0 %}
+      {% set totalProviderConsumables %} 
+        {{ (data['provider-consumables'] | float * providerMultiplier) if data['provider-consumables'] else 0 }} 
+      {% endset %}
+
+      {% set totalProviderExtras = 0 %}
+      {% set totalProviderExtras %} 
+        {{ (data['provider-extras'] | float * providerMultiplier) if data['provider-extras'] else 0 }} 
+      {% endset %}
+
+      {% set totalProviderCareCosts = (data['provider-rate'] | float * providerMultiplier) %}
+      {% set totalYearlyProviderCost = totalProviderCareCosts | float + totalProviderConsumables | float + totalProviderExtras | float %}
+
+      {% set totalChildcareHours = data['hours'] | float * weeksMultiplier %}
+      {% set childcareCostPerHour = (totalProviderCareCosts / totalChildcareHours) | round(2) %}
+
+      {% set gvtWeeklyHoursCovered = 0 %}
+      {% set gvtWeeklyHoursCovered %} 
+        {{ 1140/weeksMultiplier if data['schemes'] and "working" in data['schemes'] }} 
+        {{ 570/weeksMultiplier if data['schemes'] and "disadvantage" in data['schemes'] and "working" not in data['schemes'] and "universal34" not in data['schemes'] }} 
+        {{ 570/weeksMultiplier if data['schemes'] and "universal34" in data['schemes'] and "working" not in data['schemes'] and "disadvantage" not in data['schemes']}} 
+      {% endset %}
+      {% set gvtWeeklyHoursCovered %} 
+        {{ data['provider-restricted-hours'] | float if data['provider-all-hours'] == "false" else gvtWeeklyHoursCovered }} 
+      {% endset %}
+      {% set gvtWeeklyHoursCovered %} 
+        {{ data['hours'] if gvtWeeklyHoursCovered | float > data['hours'] | float else gvtWeeklyHoursCovered }} 
+      {% endset %}
+      
+
+      {% set gvtWeeklyHoursCostsMet = (gvtWeeklyHoursCovered * childcareCostPerHour) | round(2) %} 
+      {% set gvtAnnualHoursCostsMet = (gvtWeeklyHoursCostsMet * weeksMultiplier) | round(2) %} 
+      {% set subTotalOutstandingCosts = totalYearlyProviderCost - gvtAnnualHoursCostsMet %} 
+
+      <!-- UNIVERSAL CREDIT CALC -->
+      {% set universalCreditBenefit %} 
+        {{ (subTotalOutstandingCosts * 0.85) if data['schemes'] and "universal" in data['schemes'] else 0 }} 
+      {% endset %}
+      {% set universalCreditBenefit %} 
+        {{ 1131.88 if universalCreditBenefit | float > 1131.88 else universalCreditBenefit }} 
+      {% endset %}
+
+      <!-- TAX FREE CALC -->
+      {% set taxFreeCreditBenefit %} 
+        {{ (subTotalOutstandingCosts * 0.20) if data['schemes'] and "taxfree" in data['schemes'] else 0 }} 
+      {% endset %}
+      {% set taxFreeCap %}
+        {{ 4000 if data['disability'] and data['disability'] == "true" else 2000 }} 
+      {% endset %}
+      {% set taxFreeCreditBenefit %} 
+        {{ taxFreeCap if taxFreeCreditBenefit | float > taxFreeCap else taxFreeCreditBenefit }}
+      {% endset %}
+
+      {% set gvtCostsMet = gvtAnnualHoursCostsMet | float + universalCreditBenefit | float + taxFreeCreditBenefit | float %}
+
+      <!-- END OF CALCULATIONS -->
+
+      {{ govukInsetText({
+        text: "All calculations are an estimate only. We recommend you speak directly to your childcare provider who can provide tailored information to meet your individual circumstances."
+      }) }}
+
+      {{ govukDetails({
+        summaryText: "Dev tools",
+        html: "weeksMultiplier:" + weeksMultiplier + "<br/>" + 
+        "providerMultiplier:" + providerMultiplier + "<br/>" +
+        "totalProviderConsumables:" + totalProviderConsumables + "<br/>" +
+        "totalProviderCareCosts:" + totalProviderCareCosts + "<br/>" +
+        "totalYearlyProviderCost:" + totalYearlyProviderCost + "<br/>" +
+        "totalChildcareHours:" + totalChildcareHours + "<br/>" +
+        "childcareCostPerHour:" + childcareCostPerHour + "<br/>" +
+        "gvtWeeklyHoursCovered:" + gvtWeeklyHoursCovered + "<br/>" +
+        "gvtAnnualHoursCostsMet:" + gvtAnnualHoursCostsMet + "<br/>"  +
+        "subTotalOutstandingCosts:" + subTotalOutstandingCosts + "<br/>" + 
+        "universalCreditBenefit:" + universalCreditBenefit + "<br/>" +
+        "taxFreeCreditBenefit:" + taxFreeCreditBenefit + "<br/>" + 
+        "gvtCostsMet:" + gvtCostsMet
+      }) }}
+
+      {% set costsHtml %}
+      {{ govukTable({
+        firstCellIsHeader: true,
+        head: [
+          { text: "" },
+          { text: "Weekly" },
+          { text: "Monthly" },
+          { text: "Yearly" }
+        ],
+        rows: [
+          [
+            {
+              text: "Total childcare costs"
+            },
+            {
+              text: "£" + (totalYearlyProviderCost / 52) | round(2)
+            },
+             {
+              text: "£" + (totalYearlyProviderCost / 12) | round(2)
+            },
+             {
+              text: "£" + totalYearlyProviderCost | round(2)
+            }
+          ],
+          [
+            {
+              text: "Total government support"
+            },
+           {
+              text: "£" + (gvtCostsMet / 52) | round(2)
+            },
+             {
+              text: "£" + (gvtCostsMet / 12) | round(2)
+            },
+             {
+              text: "£" + gvtCostsMet | round(2)
+            }
+          ],
+          [
+            {
+              text: "Your final costs to cover"
+            },
+           {
+               text: "£" + ((totalYearlyProviderCost - gvtCostsMet) / 52) | round(2)
+            },
+             {
+              text: "£" + ((totalYearlyProviderCost - gvtCostsMet) / 12) | round(2)
+            },
+             {
+              text: "£" + (totalYearlyProviderCost - gvtCostsMet) | round(2)
+            }
+          ]
+        ]
+      }) }}
+      {% endset -%}
+
+      {% set childcareHoursHtml %}
+      <h2 class="govuk-heading-m">
+        Your childcare hours
+      </h2>
+
+      {{ govukSummaryList({
+        rows: [
+          {
+            key: {
+              text: "Your government funded childcare hours per week"
+            },
+            value: {
+              text: (gvtWeeklyHoursCovered  | round(0))+ " hours per week"
+            }
+          },
+          {
+            key: {
+              text: "Hours you still have to pay for"
+            },
+            value: {
+              text: ((totalChildcareHours / weeksMultiplier) - gvtWeeklyHoursCovered) | round(0) + " hours per week"
+            }
+          }
+        ]
+      }) }}
+      {% endset -%}
+
+      {{ govukTabs({
+          items: [
+            {
+              label: "Estimated costs",
+              id: "estimated-costs",
+              panel: {  html: costsHtml + childcareHoursHtml}
+            },
+            {
+              label: "Your answers",
+              id: "your-answers",
+              panel: {  html: yourAnswersHtml }
+            }
+          ]
+        }) }}
+
+     <p><a href="/start">Start again</a></p>
+
+    </div>
+  </div>
+{% endblock %}

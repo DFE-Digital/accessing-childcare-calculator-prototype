@@ -1,0 +1,38 @@
+{% extends "layouts/question.html" %}
+
+{% block pageTitle %}
+  Question page template – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block question %}
+
+      <form class="form" action="consumables-answer" method="post">
+
+       {{ govukInput({
+          label: {
+            text: "Does your provider charge for consumables? (optional)",
+            classes: "govuk-label--l",
+            isPageHeading: true
+          },
+          hint: {
+            text:"These are fees not covered by the nursery and could be nappies, hot meals, etc."
+          },
+          classes: "govuk-input--width-5",
+          id: "provider-consumables",
+          name: "provider-consumables",
+          spellcheck: false,
+          prefix: {
+            text: "£"
+          },
+          suffix: {
+            text: "per " + data['provider-frequency'] | replace("ly", "")
+          }
+        }) }}
+
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+
+      </form>
+
+{% endblock %}
