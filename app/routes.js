@@ -53,7 +53,7 @@ router.post('/provider-cost-answer', function (req, res) {
     requiredFieldValidation(req, res, 'provider-rate', '/provider-hours', '/provider-cost', 'Enter your provider cost');
 })
 router.post('/provider-hours-answer', function (req, res) {
-    requiredFieldValidation(req, res, 'provider-hours', '/consumables', '/provider-hours', 'Select the entitled hours used');
+    requiredFieldValidation(req, res, 'provider-all-hours', '/consumables', '/provider-hours', 'Select the entitled hours used');
 })
 router.post('/consumables-answer', function (req, res) {
     redirect(req, res, "extras");
